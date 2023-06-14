@@ -1,7 +1,7 @@
-package com.dreamtrips.browsing.api;
+package com.reactive.webflux.api;
 
-import com.dreamtrips.browsing.component.WebClientComponent;
-import com.dreamtrips.browsing.dto.NobelPrizeResponseDto;
+import com.reactive.webflux.component.WebClientComponent;
+import com.reactive.webflux.dto.NobelPrizeResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;

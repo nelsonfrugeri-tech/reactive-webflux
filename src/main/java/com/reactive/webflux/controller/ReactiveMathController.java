@@ -1,9 +1,9 @@
-package com.dreamtrips.browsing.controller;
+package com.reactive.webflux.controller;
 
-import com.dreamtrips.browsing.dto.MultiplyDto;
-import com.dreamtrips.browsing.dto.ResponseDto;
-import com.dreamtrips.browsing.exception.InputValidationException;
-import com.dreamtrips.browsing.service.ReactiveMathService;
+import com.reactive.webflux.dto.MultiplyDto;
+import com.reactive.webflux.dto.ResponseDto;
+import com.reactive.webflux.exception.InputValidationException;
+import com.reactive.webflux.service.ReactiveMathService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

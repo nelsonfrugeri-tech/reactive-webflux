@@ -1,4 +1,4 @@
-package com.dreamtrips.browsing.exception;
+package com.reactive.webflux.exception;
 
 public class InputValidationException extends RuntimeException {
 

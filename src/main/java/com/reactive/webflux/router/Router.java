@@ -1,4 +1,4 @@
-package com.dreamtrips.browsing.router;
+package com.reactive.webflux.router;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

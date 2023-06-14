@@ -1,6 +1,6 @@
-package com.dreamtrips.browsing.service;
+package com.reactive.webflux.service;
 
-import com.dreamtrips.browsing.dto.ResponseDto;
+import com.reactive.webflux.dto.ResponseDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

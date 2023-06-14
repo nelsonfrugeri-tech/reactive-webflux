@@ -1,9 +1,9 @@
-package com.dreamtrips.browsing.service;
+package com.reactive.webflux.service;
 
-import com.dreamtrips.browsing.dto.InputValidationResponseDto;
-import com.dreamtrips.browsing.dto.MultiplyDto;
-import com.dreamtrips.browsing.dto.ResponseDto;
-import com.dreamtrips.browsing.exception.InputValidationException;
+import com.reactive.webflux.dto.InputValidationResponseDto;
+import com.reactive.webflux.dto.MultiplyDto;
+import com.reactive.webflux.dto.ResponseDto;
+import com.reactive.webflux.exception.InputValidationException;
 import java.time.Duration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

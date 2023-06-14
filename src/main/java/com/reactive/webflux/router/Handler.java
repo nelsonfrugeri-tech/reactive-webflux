@@ -1,17 +1,16 @@
-package com.dreamtrips.browsing.router;
+package com.reactive.webflux.router;
 
-import com.dreamtrips.browsing.api.NobelApi;
-import com.dreamtrips.browsing.dto.MultiplyDto;
-import com.dreamtrips.browsing.dto.NobelPrizeResponseDto;
-import com.dreamtrips.browsing.dto.ResponseDto;
-import com.dreamtrips.browsing.service.ReactiveMathService;
+import com.reactive.webflux.api.NobelApi;
+import com.reactive.webflux.dto.MultiplyDto;
+import com.reactive.webflux.dto.NobelPrizeResponseDto;
+import com.reactive.webflux.dto.ResponseDto;
+import com.reactive.webflux.service.ReactiveMathService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component

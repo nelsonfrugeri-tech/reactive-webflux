@@ -1,13 +1,13 @@
-package com.dreamtrips.browsing;
+package com.reactive.webflux;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BrowsingApplication {
+public class WebfluxApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BrowsingApplication.class, args);
+		SpringApplication.run(WebfluxApplication.class, args);
 	}
 
 }

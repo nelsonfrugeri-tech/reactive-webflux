@@ -1,4 +1,4 @@
-package com.dreamtrips.browsing.dto;
+package com.reactive.webflux.dto;
 
 import java.util.Date;
 import lombok.Data;

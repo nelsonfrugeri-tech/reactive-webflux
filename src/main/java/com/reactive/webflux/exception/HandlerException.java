@@ -1,6 +1,6 @@
-package com.dreamtrips.browsing.exception;
+package com.reactive.webflux.exception;
 
-import com.dreamtrips.browsing.dto.InputValidationResponseDto;
+import com.reactive.webflux.dto.InputValidationResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

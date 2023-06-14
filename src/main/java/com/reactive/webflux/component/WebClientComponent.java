@@ -1,4 +1,4 @@
-package com.dreamtrips.browsing.component;
+package com.reactive.webflux.component;
 
 import java.util.Map;
 import org.springframework.stereotype.Component;

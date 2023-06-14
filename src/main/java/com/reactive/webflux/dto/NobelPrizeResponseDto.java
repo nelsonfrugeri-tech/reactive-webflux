@@ -1,4 +1,4 @@
-package com.dreamtrips.browsing.dto;
+package com.reactive.webflux.dto;
 
 import java.util.List;
 import java.util.Map;
