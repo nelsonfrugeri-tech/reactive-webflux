@@ -7,15 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 public class LogDto {
-
-  private String host;
 
   private Request request;
 
@@ -34,19 +31,22 @@ public class LogDto {
 
     private String method;
 
-    private String url;
+    private String uri;
 
+    @JsonInclude(Include.NON_NULL)
     private String headers;
 
+    @JsonInclude(Include.NON_NULL)
     @JsonProperty("query_parameters")
     private String queryParameters;
 
-    @JsonProperty("method_name")
-    private String methodName;
+    @JsonInclude(Include.NON_NULL)
+    private String path;
 
     @JsonInclude(Include.NON_NULL)
-    private String body;
+    private Object body;
 
+    @JsonInclude(Include.NON_NULL)
     @JsonProperty("execution_body")
     private String exceptionBody;
   }
@@ -57,13 +57,16 @@ public class LogDto {
   @Getter
   public static class Response {
 
-      private String status;
+    @JsonProperty("status_code")
+      private String statusCode;
 
+      @JsonInclude(Include.NON_NULL)
       private String headers;
 
       @JsonInclude(Include.NON_NULL)
-      private String body;
+      private Object body;
 
+    @JsonInclude(Include.NON_NULL)
     @JsonProperty("execution_body")
     private String exceptionBody;
   }

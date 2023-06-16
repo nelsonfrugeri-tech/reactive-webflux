@@ -1,5 +1,7 @@
 package com.reactive.webflux.log.decorator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reactive.webflux.log.dto.LogDto;
 import java.nio.charset.Charset;
 import lombok.extern.slf4j.Slf4j;
@@ -22,23 +24,24 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
     @Override
     public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
       if (body instanceof Mono) {
-        Mono<? extends DataBuffer> bodyMono = (Mono<? extends DataBuffer>) body;
+        final var bodyMono = (Mono<? extends DataBuffer>) body;
+        final var objectMapper = new ObjectMapper();
+
         return bodyMono.flatMap(dataBuffer -> {
-          // Copy the data buffer
-          DataBuffer copy = dataBuffer.factory().wrap(dataBuffer.asByteBuffer().asReadOnlyBuffer());
+          final var copy = dataBuffer.factory().wrap(dataBuffer.asByteBuffer().asReadOnlyBuffer());
+          final var bytes = new byte[copy.readableByteCount()];
 
-          // Log the body
-          byte[] bytes = new byte[copy.readableByteCount()];
           copy.read(bytes);
-          String strContent = new String(bytes, Charset.defaultCharset());
+          try {
+            logDto.getResponse().setBody(objectMapper.readTree(new String(bytes,
+                Charset.defaultCharset())));
+          } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+          }
 
-          logDto.getResponse().setBody(strContent);
-
-          // Write the original data buffer
           return super.writeWith(Mono.just(dataBuffer));
         });
       }
       return super.writeWith(body);
     }
-
-  }
+}
