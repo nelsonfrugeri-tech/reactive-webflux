@@ -1,5 +1,6 @@
 package com.reactive.webflux.log.decorator;
 
+import com.reactive.webflux.log.dto.LogDto;
 import java.nio.charset.Charset;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
@@ -11,8 +12,11 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class ResponseDecorator extends ServerHttpResponseDecorator {
 
-    public ResponseDecorator(ServerHttpResponse delegate) {
+    private final LogDto logDto;
+
+    public ResponseDecorator(LogDto logDto, ServerHttpResponse delegate) {
       super(delegate);
+      this.logDto = logDto;
     }
 
     @Override
@@ -27,7 +31,8 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
           byte[] bytes = new byte[copy.readableByteCount()];
           copy.read(bytes);
           String strContent = new String(bytes, Charset.defaultCharset());
-          log.info("Response Body: {}", strContent);
+
+          logDto.getResponse().setBody(strContent);
 
           // Write the original data buffer
           return super.writeWith(Mono.just(dataBuffer));

@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Setter
 @Getter
 public class LogDto {
 
@@ -27,7 +28,7 @@ public class LogDto {
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Builder
+  @Setter
   @Getter
   public static class Request {
 
@@ -43,6 +44,7 @@ public class LogDto {
     @JsonProperty("method_name")
     private String methodName;
 
+    @JsonInclude(Include.NON_NULL)
     private String body;
 
     @JsonProperty("execution_body")
@@ -51,7 +53,7 @@ public class LogDto {
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Builder
+  @Setter
   @Getter
   public static class Response {
 
@@ -59,6 +61,7 @@ public class LogDto {
 
       private String headers;
 
+      @JsonInclude(Include.NON_NULL)
       private String body;
 
     @JsonProperty("execution_body")
@@ -67,7 +70,7 @@ public class LogDto {
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Builder
+  @Setter
   @Getter
   public static class Exception {
 

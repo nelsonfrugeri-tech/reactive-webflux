@@ -1,5 +1,6 @@
 package com.reactive.webflux.log.decorator;
 
+import com.reactive.webflux.log.dto.LogDto;
 import java.nio.charset.Charset;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -10,8 +11,11 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public class RequestDecorator extends ServerHttpRequestDecorator {
 
-    public RequestDecorator(ServerHttpRequest delegate) {
+  private final LogDto logDto;
+
+    public RequestDecorator(LogDto logDto, ServerHttpRequest delegate) {
       super(delegate);
+      this.logDto = logDto;
     }
 
     @Override
@@ -20,7 +24,7 @@ public class RequestDecorator extends ServerHttpRequestDecorator {
         byte[] bytes = new byte[dataBuffer.readableByteCount()];
         dataBuffer.read(bytes);
         String body = new String(bytes, Charset.defaultCharset());
-        log.info("Request Body: {}", body);
+        logDto.getRequest().setBody(body);
       });
     }
   }
