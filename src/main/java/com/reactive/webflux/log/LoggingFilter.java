@@ -1,7 +1,9 @@
 package com.reactive.webflux.log;
 
 import com.reactive.webflux.log.decorator.ExchangeDecorator;
+import com.reactive.webflux.log.dto.LogDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
