@@ -1,5 +1,6 @@
-package com.reactive.webflux.log;
+package com.reactive.webflux.log.config;
 
+import com.reactive.webflux.log.LoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.EnableWebFlux;
