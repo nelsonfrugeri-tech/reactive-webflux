@@ -1,12 +1,16 @@
 package com.reactive.webflux.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.reactive.webflux.log.decorator.ExchangeDecorator;
 import com.reactive.webflux.log.dto.LogDto;
 import com.reactive.webflux.log.dto.LogDto.Request;
 import com.reactive.webflux.log.dto.LogDto.Response;
+import com.reactive.webflux.log.dto.LogDto.Response.Status;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -20,32 +24,34 @@ public class LoggingFilter implements WebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    final var objectMapper = new ObjectMapper();
     final var logDto = new LogDto();
 
-    return requestLogs(logDto, exchange.getRequest())
-        .flatMap(lDto -> responseLogs(lDto, exchange.getResponse()))
+    return setRequestLogs(logDto, exchange.getRequest())
+        .flatMap(lDto -> setResponseLogs(lDto, exchange.getResponse()))
+        .flatMap(this::setZonedDateTime)
         .then(chain.filter(new ExchangeDecorator(logDto, exchange)))
         .doOnSuccess(aVoid -> {
           try {
-            log.info("Request Successfully: {}", objectMapper.writeValueAsString(logDto));
+            log.info("Request Successfully: {}", JsonMapper.builder().findAndAddModules().build()
+                .writeValueAsString(logDto));
           } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error("Failed during the serialization process of the log payload: {}",
+                e.getMessage());
           }
         });
   }
 
-  private Mono<LogDto> responseLogs(LogDto logDto, ServerHttpResponse exchange) {
+  private Mono<LogDto> setResponseLogs(LogDto logDto, ServerHttpResponse exchange) {
     final var response = new Response();
 
-    response.setStatusCode(Objects.requireNonNull(exchange.getStatusCode()).toString());
+    setStatus(exchange, response);
     response.setHeaders(exchange.getHeaders().toString());
     logDto.setResponse(response);
 
     return Mono.just(logDto);
   }
 
-  private Mono<LogDto> requestLogs(LogDto logDto, ServerHttpRequest exchange) {
+  private Mono<LogDto> setRequestLogs(LogDto logDto, ServerHttpRequest exchange) {
     final var request = new Request();
 
     request.setQueryParameters(exchange.getQueryParams().toString());
@@ -55,6 +61,22 @@ public class LoggingFilter implements WebFilter {
     request.setHeaders(exchange.getHeaders().toString());
     logDto.setRequest(request);
 
+    return Mono.just(logDto);
+  }
+
+  private static void setStatus(ServerHttpResponse exchange, Response response) {
+
+    Optional<String> status = Optional.ofNullable(exchange).map(ServerHttpResponse::getStatusCode)
+        .map(Objects::toString);
+
+    response.setStatus(Status.builder()
+        .code(status.map(s -> s.split(" ")[0]).orElse(""))
+        .message(status.map(s -> s.split(" ")[1]).orElse(""))
+        .build());
+  }
+
+  private Mono<LogDto> setZonedDateTime(LogDto logDto) {
+    logDto.setZonedDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
     return Mono.just(logDto);
   }
 }

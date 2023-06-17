@@ -2,6 +2,7 @@ package com.reactive.webflux.log.decorator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.reactive.webflux.log.dto.LogDto;
 import java.nio.charset.Charset;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,14 @@ public class RequestDecorator extends ServerHttpRequestDecorator {
     public Flux<DataBuffer> getBody() {
       return super.getBody().doOnNext(dataBuffer -> {
         final var bytes = new byte[dataBuffer.readableByteCount()];
-        final var objectMapper = new ObjectMapper();
 
         dataBuffer.read(bytes);
         try {
-          logDto.getRequest().setBody(objectMapper.readTree(new String(bytes,
-              Charset.defaultCharset())));
+          logDto.getRequest().setBody(JsonMapper.builder().findAndAddModules().build()
+              .readTree(new String(bytes, Charset.defaultCharset())));
         } catch (JsonProcessingException e) {
-          throw new RuntimeException(e);
+          log.error("Failed during the serialization process of the request body: {}",
+              e.getMessage());
         }
       });
     }

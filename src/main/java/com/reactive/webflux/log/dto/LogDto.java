@@ -3,7 +3,9 @@ package com.reactive.webflux.log.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +23,7 @@ public class LogDto {
   private Exception exception;
 
   @JsonProperty("zone_date_time")
-  private String zonedDateTime;
+  private ZonedDateTime zonedDateTime;
 
   @AllArgsConstructor
   @NoArgsConstructor
@@ -45,10 +47,6 @@ public class LogDto {
 
     @JsonInclude(Include.NON_NULL)
     private Object body;
-
-    @JsonInclude(Include.NON_NULL)
-    @JsonProperty("execution_body")
-    private String exceptionBody;
   }
 
   @AllArgsConstructor
@@ -57,8 +55,8 @@ public class LogDto {
   @Getter
   public static class Response {
 
-    @JsonProperty("status_code")
-      private String statusCode;
+      @JsonProperty("status_code")
+      private Status status;
 
       @JsonInclude(Include.NON_NULL)
       private String headers;
@@ -66,9 +64,16 @@ public class LogDto {
       @JsonInclude(Include.NON_NULL)
       private Object body;
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonProperty("execution_body")
-    private String exceptionBody;
+      @AllArgsConstructor
+      @NoArgsConstructor
+      @Builder
+      @Getter
+      public static class Status {
+
+        private String code;
+
+        private String message;
+      }
   }
 
   @AllArgsConstructor
