@@ -43,4 +43,13 @@ public class ReactiveMathService {
         .defaultIfEmpty(ResponseEntity.badRequest()
             .body(new InputValidationResponseDto(1, "", 100, 1)));
   }
+
+  public Mono<ResponseDto> multiplication(Mono<MultiplyDto> requestDto) {
+    return requestDto
+        .filter(dto -> dto.getFirst() > 10 && dto.getSecond() > 10)
+        .flatMap(dto -> Mono.just(
+            new ResponseDto(dto.getFirst() * dto.getSecond())
+        ))
+        .defaultIfEmpty(new ResponseDto(0));
+  }
 }

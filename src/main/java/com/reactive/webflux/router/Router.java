@@ -21,7 +21,8 @@ public class Router {
             .GET("/square/multiples/{input}", handler::multiples)
             .GET("/square/multiples/{input}/stream", handler::multiplesStream)
             .POST("/multiply", handler::multiply)
-            .GET("/nobelPrizes", handler::list))
+            .GET("/nobelPrizes", handler::list)
+            .POST("/multiplication", handler::multiplication))
         .build();
   }
 }

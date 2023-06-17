@@ -1,7 +1,6 @@
 package com.reactive.webflux.log.decorator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.reactive.webflux.log.dto.LogDto;
 import java.nio.charset.Charset;

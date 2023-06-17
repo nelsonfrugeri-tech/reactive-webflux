@@ -78,7 +78,7 @@ public class LogDto {
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Setter
+  @Builder
   @Getter
   public static class Exception {
 

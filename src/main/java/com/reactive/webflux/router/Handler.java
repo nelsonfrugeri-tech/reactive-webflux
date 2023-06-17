@@ -50,4 +50,9 @@ public class Handler {
     return ServerResponse.ok().body(reactiveMathService.multiply(
         serverRequest.bodyToMono(MultiplyDto.class)).map(HttpEntity::getBody), ResponseDto.class);
   }
+
+  public Mono<ServerResponse> multiplication(ServerRequest serverRequest) {
+    return ServerResponse.ok().body(reactiveMathService.multiplication(
+        serverRequest.bodyToMono(MultiplyDto.class)), ResponseDto.class);
+  }
 }

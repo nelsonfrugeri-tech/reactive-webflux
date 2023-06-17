@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.reactive.webflux.log.decorator.ExchangeDecorator;
 import com.reactive.webflux.log.dto.LogDto;
+import com.reactive.webflux.log.dto.LogDto.Exception;
 import com.reactive.webflux.log.dto.LogDto.Request;
 import com.reactive.webflux.log.dto.LogDto.Response;
 import com.reactive.webflux.log.dto.LogDto.Response.Status;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -30,15 +33,37 @@ public class LoggingFilter implements WebFilter {
         .flatMap(lDto -> setResponseLogs(lDto, exchange.getResponse()))
         .flatMap(this::setZonedDateTime)
         .then(chain.filter(new ExchangeDecorator(logDto, exchange)))
-        .doOnSuccess(aVoid -> {
-          try {
-            log.info("Request Successfully: {}", JsonMapper.builder().findAndAddModules().build()
-                .writeValueAsString(logDto));
-          } catch (JsonProcessingException e) {
-            log.error("Failed during the serialization process of the log payload: {}",
-                e.getMessage());
-          }
-        });
+        .doOnError(throwable -> logException(logDto, exchange, throwable))
+        .doOnSuccess(aVoid -> logSuccessfully(logDto));
+  }
+
+  private static void logSuccessfully(LogDto logDto) {
+    try {
+      log.info("Request Successfully: {}", JsonMapper.builder().findAndAddModules().build()
+          .writeValueAsString(logDto));
+    } catch (JsonProcessingException e) {
+      log.error("Failed during the serialization process of the log payload: {}",
+          e.getMessage());
+    }
+  }
+
+  private void logException(LogDto logDto, ServerWebExchange exchange, Throwable ex) {
+    try {
+      log.info("Request Exception: {}", JsonMapper.builder().findAndAddModules().build()
+          .writeValueAsString(setException(logDto, ex)));
+    } catch (JsonProcessingException e) {
+      log.error("Failed during the serialization process of the log payload: {}",
+          e.getMessage());
+    }
+  }
+
+  private LogDto setException(LogDto logDto, Throwable ex) {
+    logDto.setException(Exception.builder()
+        .message(ex.getMessage())
+        .stackTrace(getStackTraceAsString(ex))
+        .build());
+
+    return logDto;
   }
 
   private Mono<LogDto> setResponseLogs(LogDto logDto, ServerHttpResponse exchange) {
@@ -75,11 +100,14 @@ public class LoggingFilter implements WebFilter {
         .build());
   }
 
+  private String getStackTraceAsString(Throwable ex) {
+    StringWriter stringWriter = new StringWriter();
+    ex.printStackTrace(new PrintWriter(stringWriter));
+    return stringWriter.toString();
+  }
+
   private Mono<LogDto> setZonedDateTime(LogDto logDto) {
     logDto.setZonedDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
     return Mono.just(logDto);
   }
 }
-
-
-
