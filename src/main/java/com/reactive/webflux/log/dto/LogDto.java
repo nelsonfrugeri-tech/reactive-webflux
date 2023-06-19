@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -56,24 +58,13 @@ public class LogDto {
   public static class Response {
 
       @JsonProperty("status_code")
-      private Status status;
+      private int statusCode;
 
       @JsonInclude(Include.NON_NULL)
-      private String headers;
+      private HttpHeaders headers;
 
       @JsonInclude(Include.NON_NULL)
       private Object body;
-
-      @AllArgsConstructor
-      @NoArgsConstructor
-      @Builder
-      @Getter
-      public static class Status {
-
-        private String code;
-
-        private String message;
-      }
   }
 
   @AllArgsConstructor

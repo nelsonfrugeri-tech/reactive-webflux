@@ -7,13 +7,10 @@ import com.reactive.webflux.log.dto.LogDto;
 import com.reactive.webflux.log.dto.LogDto.Exception;
 import com.reactive.webflux.log.dto.LogDto.Request;
 import com.reactive.webflux.log.dto.LogDto.Response;
-import com.reactive.webflux.log.dto.LogDto.Response.Status;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -30,7 +27,6 @@ public class LoggingFilter implements WebFilter {
     final var logDto = new LogDto();
 
     return setRequestLogs(logDto, exchange.getRequest())
-        .flatMap(lDto -> setResponseLogs(lDto, exchange.getResponse()))
         .flatMap(this::setZonedDateTime)
         .then(chain.filter(new ExchangeDecorator(logDto, exchange)))
         .doOnError(throwable -> logException(logDto, exchange, throwable))
@@ -66,16 +62,6 @@ public class LoggingFilter implements WebFilter {
     return logDto;
   }
 
-  private Mono<LogDto> setResponseLogs(LogDto logDto, ServerHttpResponse exchange) {
-    final var response = new Response();
-
-    setStatus(exchange, response);
-    response.setHeaders(exchange.getHeaders().toString());
-    logDto.setResponse(response);
-
-    return Mono.just(logDto);
-  }
-
   private Mono<LogDto> setRequestLogs(LogDto logDto, ServerHttpRequest exchange) {
     final var request = new Request();
 
@@ -89,19 +75,8 @@ public class LoggingFilter implements WebFilter {
     return Mono.just(logDto);
   }
 
-  private static void setStatus(ServerHttpResponse exchange, Response response) {
-
-    Optional<String> status = Optional.ofNullable(exchange).map(ServerHttpResponse::getStatusCode)
-        .map(Objects::toString);
-
-    response.setStatus(Status.builder()
-        .code(status.map(s -> s.split(" ")[0]).orElse(""))
-        .message(status.map(s -> s.split(" ")[1]).orElse(""))
-        .build());
-  }
-
   private String getStackTraceAsString(Throwable ex) {
-    StringWriter stringWriter = new StringWriter();
+    final var stringWriter = new StringWriter();
     ex.printStackTrace(new PrintWriter(stringWriter));
     return stringWriter.toString();
   }
