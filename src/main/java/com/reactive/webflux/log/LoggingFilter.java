@@ -6,14 +6,12 @@ import com.reactive.webflux.log.decorator.ExchangeDecorator;
 import com.reactive.webflux.log.dto.LogDto;
 import com.reactive.webflux.log.dto.LogDto.Exception;
 import com.reactive.webflux.log.dto.LogDto.Request;
-import com.reactive.webflux.log.dto.LogDto.Response;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -29,7 +27,7 @@ public class LoggingFilter implements WebFilter {
     return setRequestLogs(logDto, exchange.getRequest())
         .flatMap(this::setZonedDateTime)
         .then(chain.filter(new ExchangeDecorator(logDto, exchange)))
-        .doOnError(throwable -> logException(logDto, exchange, throwable))
+        .onErrorResume(throwable -> logException(logDto, throwable))
         .doOnSuccess(aVoid -> logSuccessfully(logDto));
   }
 
@@ -43,7 +41,7 @@ public class LoggingFilter implements WebFilter {
     }
   }
 
-  private void logException(LogDto logDto, ServerWebExchange exchange, Throwable ex) {
+  private Mono<Void> logException(LogDto logDto, Throwable ex) {
     try {
       log.info("Request Exception: {}", JsonMapper.builder().findAndAddModules().build()
           .writeValueAsString(setException(logDto, ex)));
@@ -51,6 +49,8 @@ public class LoggingFilter implements WebFilter {
       log.error("Failed during the serialization process of the log payload: {}",
           e.getMessage());
     }
+
+    return Mono.error(ex);
   }
 
   private LogDto setException(LogDto logDto, Throwable ex) {
