@@ -4,6 +4,7 @@ import com.reactive.webflux.api.NobelApi;
 import com.reactive.webflux.dto.MultiplyDto;
 import com.reactive.webflux.dto.NobelPrizeResponseDto;
 import com.reactive.webflux.dto.ResponseDto;
+import com.reactive.webflux.exception.InputValidationException;
 import com.reactive.webflux.service.ReactiveMathService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -32,7 +33,9 @@ public class Handler {
 
   public Mono<ServerResponse> squareHandler(ServerRequest serverRequest) {
     return ServerResponse.ok().body(reactiveMathService.findSquare(
-        Integer.parseInt(serverRequest.pathVariable("input"))), ResponseDto.class);
+        Integer.parseInt(serverRequest.pathVariable("input"))), ResponseDto.class)
+        .doOnError(throwable -> Mono.error(new InputValidationException(
+            Integer.parseInt(serverRequest.pathVariable("input")))));
   }
 
   public Mono<ServerResponse> multiples(ServerRequest serverRequest) {

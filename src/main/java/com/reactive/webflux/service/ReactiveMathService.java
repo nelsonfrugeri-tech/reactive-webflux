@@ -14,7 +14,10 @@ import reactor.core.publisher.Mono;
 public class ReactiveMathService {
 
   public Mono<ResponseDto> findSquare(int input) {
-    return Mono.fromSupplier(() -> new ResponseDto(input * input));
+    if (input < 10) {
+      throw new InputValidationException(input);
+    }
+    return Mono.fromSupplier( () -> new ResponseDto(input * input));
   }
 
   public Flux<ResponseDto> multiples(int input) {
