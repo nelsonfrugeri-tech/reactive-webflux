@@ -15,7 +15,7 @@ public class ReactiveMathService {
 
   public Mono<ResponseDto> findSquare(int input) {
     if (input < 10) {
-      throw new InputValidationException(input);
+      return Mono.error(new InputValidationException(input));
     }
     return Mono.fromSupplier( () -> new ResponseDto(input * input));
   }
