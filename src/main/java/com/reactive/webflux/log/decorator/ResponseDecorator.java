@@ -23,7 +23,7 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
       super(delegate);
 
       this.logDto = logDto;
-      logDto.setResponse(new Response());
+      logDto.toBuilder().response(new Response());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
 
           copy.read(bytes);
           try {
-            logDto.getResponse().setBody(JsonMapper.builder().findAndAddModules().build()
+            logDto.getResponse().toBuilder().body(JsonMapper.builder().findAndAddModules().build()
                 .readTree(new String(bytes, Charset.defaultCharset())));
           } catch (JsonProcessingException e) {
             log.error("Failed during the serialization process of the response body: {}",
@@ -53,8 +53,8 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
     }
 
   private void setResponse() {
-    logDto.getResponse().setStatusCode(Optional.ofNullable(super.getStatusCode())
+    logDto.getResponse().toBuilder().statusCode(Optional.ofNullable(super.getStatusCode())
         .map(HttpStatusCode::value).orElse(0));
-    logDto.getResponse().setHeaders(super.getHeaders());
+    logDto.getResponse().toBuilder().headers(super.getHeaders());
   }
 }

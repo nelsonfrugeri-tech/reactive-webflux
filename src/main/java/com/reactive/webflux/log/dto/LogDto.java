@@ -8,29 +8,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
+@Builder(toBuilder = true)
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LogDto {
 
   private Request request;
 
   private Response response;
+
   @JsonInclude(Include.NON_NULL)
   private Exception exception;
 
   @JsonProperty("zone_date_time")
   private ZonedDateTime zonedDateTime;
 
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Setter
+  @Builder(toBuilder = true)
   @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class Request {
 
     private String method;
@@ -51,26 +50,26 @@ public class LogDto {
     private Object body;
   }
 
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Setter
+  @Builder(toBuilder = true)
   @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class Response {
 
-      @JsonProperty("status_code")
-      private int statusCode;
+    @JsonProperty("status_code")
+    private int statusCode;
 
-      @JsonInclude(Include.NON_NULL)
-      private HttpHeaders headers;
+    @JsonInclude(Include.NON_NULL)
+    private HttpHeaders headers;
 
-      @JsonInclude(Include.NON_NULL)
-      private Object body;
+    @JsonInclude(Include.NON_NULL)
+    private Object body;
   }
 
-  @AllArgsConstructor
-  @NoArgsConstructor
   @Builder
   @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class Exception {
 
     private String message;
@@ -78,3 +77,4 @@ public class LogDto {
     private String stackTrace;
   }
 }
+

@@ -31,7 +31,7 @@ public class RequestDecorator extends ServerHttpRequestDecorator {
           DataBufferUtils.release(dataBuffer);
 
           try {
-            logDto.getRequest().setBody(JsonMapper.builder().findAndAddModules().build()
+            logDto.getRequest().toBuilder().body(JsonMapper.builder().findAndAddModules().build()
                 .readTree(new String(bytes, Charset.defaultCharset())));
           } catch (JsonProcessingException e) {
             log.error("Failed during the serialization process of the request body: {}", e.getMessage());
