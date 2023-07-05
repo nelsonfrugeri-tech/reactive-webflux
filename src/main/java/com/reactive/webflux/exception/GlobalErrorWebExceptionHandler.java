@@ -16,31 +16,31 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-//
-//@Component
-//public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
-//
-//    public GlobalErrorWebExceptionHandler(GlobalErrorAttributes g, ApplicationContext applicationContext,
-//        ServerCodecConfigurer serverCodecConfigurer) {
-//        super(g, new WebProperties.Resources(), applicationContext);
-//        super.setMessageWriters(serverCodecConfigurer.getWriters());
-//        super.setMessageReaders(serverCodecConfigurer.getReaders());
-//    }
-//
-//    @Override
-//    protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
-//        return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse);
-//    }
-//
-//    private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
-//        Throwable error = getError(request);
-//        if (error instanceof InputValidationException) {
-//            return ServerResponse.status(HttpStatus.BAD_REQUEST)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(BodyInserters.fromValue(new InputValidationResponseDto(1, "", 100, 1 )));
-//        }
-//        return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .body(BodyInserters.fromValue(new InputValidationResponseDto(1, "", 100, 1 )));
-//    }
-//}
+
+@Component
+public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
+
+    public GlobalErrorWebExceptionHandler(GlobalErrorAttributes g, ApplicationContext applicationContext,
+        ServerCodecConfigurer serverCodecConfigurer) {
+        super(g, new WebProperties.Resources(), applicationContext);
+        super.setMessageWriters(serverCodecConfigurer.getWriters());
+        super.setMessageReaders(serverCodecConfigurer.getReaders());
+    }
+
+    @Override
+    protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
+        return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse);
+    }
+
+    private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+        Throwable error = getError(request);
+        if (error instanceof InputValidationException) {
+            return ServerResponse.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(new InputValidationResponseDto(1, "", 100, 1 )));
+        }
+        return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromValue(new InputValidationResponseDto(1, "", 100, 1 )));
+    }
+}

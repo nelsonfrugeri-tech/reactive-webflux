@@ -2,29 +2,23 @@ package com.reactive.webflux.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.reactive.webflux.exception.InputValidationException;
 import com.reactive.webflux.log.decorator.ExchangeDecorator;
 import com.reactive.webflux.log.dto.LogDto;
 import com.reactive.webflux.log.dto.LogDto.Exception;
 import com.reactive.webflux.log.dto.LogDto.Request;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebExceptionHandler;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-public class LoggingFilter implements WebFilter, WebExceptionHandler {
+public class LoggingFilter implements WebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -33,13 +27,13 @@ public class LoggingFilter implements WebFilter, WebExceptionHandler {
     return setRequestLogs(logDto, exchange.getRequest())
         .flatMap(this::setZonedDateTime)
         .then(chain.filter(new ExchangeDecorator(logDto, exchange)))
-        .doOnSuccess(aVoid -> logSuccessfully(logDto))
-        .doOnError(ex -> logException(logDto, ex))
-        .doFinally(signalType -> {
-          if (signalType.name().equals("ON_ERROR")) {
-            log.info("Request Canceled: {}", exchange.getResponse().getStatusCode());
-          }
-        });
+        .doOnSuccess(aVoid -> logSuccessfully(logDto));
+//        .doOnError(ex -> logException(logDto, ex))
+//        .doFinally(signalType -> {
+//          if (signalType.name().equals("ON_ERROR")) {
+//            log.info("Request Canceled: {}", exchange.getResponse().getStatusCode());
+//          }
+//        });
   }
 
   private static void logSuccessfully(LogDto logDto) {
@@ -95,17 +89,5 @@ public class LoggingFilter implements WebFilter, WebExceptionHandler {
   private Mono<LogDto> setZonedDateTime(LogDto logDto) {
     logDto.setZonedDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
     return Mono.just(logDto);
-  }
-
-  @Override
-  public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-    if (ex instanceof InputValidationException) {
-      ServerHttpResponse response = exchange.getResponse();
-      response.setStatusCode(HttpStatus.BAD_REQUEST);
-      DataBuffer buffer = response.bufferFactory().wrap(ex.getMessage().getBytes(StandardCharsets.UTF_8));
-      return response.writeWith(Mono.just(buffer));
-    } else {
-      return Mono.error(ex);
-    }
   }
 }
