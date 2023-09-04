@@ -10,4 +10,6 @@ class WebfluxApplicationTests {
 	void contextLoads() {
 	}
 
+    // TODO: Write tests here
+    // Automated tests for NobelApi.java should be written here
 }
